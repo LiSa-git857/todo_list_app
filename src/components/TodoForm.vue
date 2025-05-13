@@ -1,10 +1,16 @@
 <script setup>
 import { ref } from 'vue'
 import { useTodoStore } from '../stores/todoStore'
+import { useUserStore } from '../stores/userStore'
 import { ElMessage } from 'element-plus'
 import { formatDate } from '../utils/dateFormat'
 
 const todoStore = useTodoStore()
+const userStore = useUserStore()
+
+// 检查是否有添加待办事项的权限
+const canAddTodo = userStore.hasPermission('add')
+
 const newTodo = ref('')
 const priority = ref('normal')
 const dueDate = ref('')
@@ -48,6 +54,11 @@ const dateShortcuts = [
 ]
 
 const addTodo = () => {
+  if (!canAddTodo) {
+    ElMessage.error('您没有添加待办事项的权限')
+    return
+  }
+  
   if (newTodo.value.trim()) {
     todoStore.addTodo(newTodo.value, priority.value, dueDate.value || null)
     ElMessage({
@@ -77,9 +88,10 @@ const addTodo = () => {
           placeholder="输入待办事项..." 
           clearable
           @keyup.enter="addTodo"
+          :disabled="!canAddTodo"
         >
           <template #append>
-            <el-button @click="addTodo" type="primary">
+            <el-button @click="addTodo" type="primary" :disabled="!canAddTodo">
               添加
             </el-button>
           </template>
@@ -88,7 +100,7 @@ const addTodo = () => {
       
       <div class="form-options">
         <el-form-item label="优先级">
-          <el-select style="width: 100px" v-model="priority" placeholder="选择优先级">
+          <el-select style="width: 100px" v-model="priority" placeholder="选择优先级" :disabled="!canAddTodo">
             <el-option
               v-for="item in priorityOptions"
               :key="item.value"
@@ -109,6 +121,7 @@ const addTodo = () => {
             :editable="false"
             :disabled-date="(time) => time.getTime() < Date.now() - 8.64e7"
             class="date-picker"
+            :disabled="!canAddTodo"
           >
             <template #default="cell">
               <div class="cell" :class="{ 'is-today': cell.isToday }">
@@ -122,6 +135,10 @@ const addTodo = () => {
           </div>
         </el-form-item>
       </div>
+      
+      <el-alert v-if="!canAddTodo" type="warning" show-icon>
+        您没有添加待办事项的权限
+      </el-alert>
     </el-form>
   </div>
 </template>

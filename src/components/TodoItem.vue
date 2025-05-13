@@ -1,5 +1,6 @@
 <script setup>
 import { useTodoStore } from '../stores/todoStore'
+import { useUserStore } from '../stores/userStore'
 import { formatDate, getRelativeDate } from '../utils/dateFormat'
 import { computed } from 'vue'
 
@@ -11,6 +12,23 @@ const props = defineProps({
 })
 
 const todoStore = useTodoStore()
+const userStore = useUserStore()
+
+// 权限检查
+const canCheckTodo = computed(() => userStore.hasPermission('check'))
+const canUncheckTodo = computed(() => userStore.hasPermission('uncheck'))
+
+// 处理复选框变更
+const handleCheckChange = (checked) => {
+  // 如果是从未完成到完成，检查"check"权限
+  // 如果是从完成到未完成，检查"uncheck"权限
+  if ((checked && canCheckTodo.value) || (!checked && canUncheckTodo.value)) {
+    todoStore.toggleTodo(props.todo.id)
+  } else if (!checked && !canUncheckTodo.value) {
+    // 如果尝试取消勾选但没有权限，回到勾选状态
+    return true // 保持勾选状态
+  }
+}
 
 const getPriorityType = (priority) => {
   switch(priority) {
@@ -51,9 +69,10 @@ const getDueDateTagType = computed(() => {
 <template>
   <div class="todo-item" :class="{ completed: todo.completed, overdue: isOverdue }">
     <el-checkbox 
-      v-model="todo.completed" 
-      @change="todoStore.toggleTodo(todo.id)"
+      :model-value="todo.completed"
+      @change="handleCheckChange"
       size="large"
+      :disabled="todo.completed && !canUncheckTodo"
     />
     
     <div class="todo-content">
@@ -86,6 +105,7 @@ const getDueDateTagType = computed(() => {
     
     <div class="todo-actions">
       <el-button 
+        v-if="userStore.hasPermission('edit')"
         type="primary"
         size="small"
         circle
@@ -93,6 +113,7 @@ const getDueDateTagType = computed(() => {
         @click="$emit('edit', todo)"
       ></el-button>
       <el-button 
+        v-if="userStore.hasPermission('delete')"
         type="danger"
         size="small"
         circle

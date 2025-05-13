@@ -1,9 +1,11 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
+import { useUserStore } from './userStore'
 
 export const useTodoStore = defineStore('todo', () => {
   // 状态
   const todos = ref([])
+  const userStore = useUserStore()
   
   // 从localStorage加载数据
   const loadTodos = () => {
@@ -26,7 +28,9 @@ export const useTodoStore = defineStore('todo', () => {
       priority,
       dueDate,
       completed: false,
-      createdAt: new Date().toISOString()
+      createdAt: new Date().toISOString(),
+      userId: userStore.currentUser?.id || null, // 添加用户ID
+      userName: userStore.currentUser?.name || '未知用户' // 添加用户名称
     }
     todos.value.push(newTodo)
     saveTodos()
@@ -57,17 +61,61 @@ export const useTodoStore = defineStore('todo', () => {
   }
   
   // 计算属性：统计信息
-  const totalTodos = computed(() => todos.value.length)
-  const completedTodos = computed(() => todos.value.filter(todo => todo.completed).length)
-  const uncompletedTodos = computed(() => todos.value.filter(todo => !todo.completed).length)
+  const totalTodos = computed(() => {
+    if (userStore.userRole === 'admin') {
+      return todos.value.length
+    } else {
+      return getUserTodos().length
+    }
+  })
+  
+  const completedTodos = computed(() => {
+    if (userStore.userRole === 'admin') {
+      return todos.value.filter(todo => todo.completed).length
+    } else {
+      return getUserTodos().filter(todo => todo.completed).length
+    }
+  })
+  
+  const uncompletedTodos = computed(() => {
+    if (userStore.userRole === 'admin') {
+      return todos.value.filter(todo => !todo.completed).length
+    } else {
+      return getUserTodos().filter(todo => !todo.completed).length
+    }
+  })
+  
   const completionRate = computed(() => {
     if (totalTodos.value === 0) return 0
     return Math.round((completedTodos.value / totalTodos.value) * 100)
   })
   
+  // 获取当前用户的待办事项
+  const getUserTodos = () => {
+    if (!userStore.currentUser) return []
+    return todos.value.filter(todo => todo.userId === userStore.currentUser.id)
+  }
+  
+  // 根据用户ID获取待办事项
+  const getTodosByUserId = (userId) => {
+    return todos.value.filter(todo => todo.userId === userId)
+  }
+  
   // 过滤函数
-  const getFilteredTodos = (filter = 'all', sortBy = 'createdAt') => {
-    let filteredTodos = [...todos.value]
+  const getFilteredTodos = (filter = 'all', sortBy = 'createdAt', userId = null) => {
+    // 默认获取当前用户的待办事项，管理员可以指定用户ID或获取所有待办事项
+    let filteredTodos = []
+    
+    if (userStore.userRole === 'admin' && userId === null) {
+      // 管理员查看所有待办事项
+      filteredTodos = [...todos.value]
+    } else if (userStore.userRole === 'admin' && userId !== null) {
+      // 管理员查看特定用户的待办事项
+      filteredTodos = [...todos.value.filter(todo => todo.userId === userId)]
+    } else {
+      // 普通用户只能查看自己的待办事项
+      filteredTodos = [...getUserTodos()]
+    }
     
     // 应用过滤条件
     if (filter === 'completed') {
@@ -94,6 +142,30 @@ export const useTodoStore = defineStore('todo', () => {
     return filteredTodos
   }
   
+  // 获取所有用户的统计信息
+  const getUsersStats = () => {
+    // 从待办事项中提取所有用户ID
+    const userIds = [...new Set(todos.value.map(todo => todo.userId))]
+    
+    return userIds.map(userId => {
+      const userTodos = todos.value.filter(todo => todo.userId === userId)
+      const userName = userTodos[0]?.userName || '未知用户'
+      const total = userTodos.length
+      const completed = userTodos.filter(todo => todo.completed).length
+      const uncompleted = total - completed
+      const rate = total > 0 ? Math.round((completed / total) * 100) : 0
+      
+      return {
+        userId,
+        userName,
+        total,
+        completed,
+        uncompleted,
+        rate
+      }
+    })
+  }
+  
   // 初始加载
   loadTodos()
   
@@ -107,6 +179,9 @@ export const useTodoStore = defineStore('todo', () => {
     completedTodos, 
     uncompletedTodos, 
     completionRate,
-    getFilteredTodos
+    getFilteredTodos,
+    getUserTodos,
+    getTodosByUserId,
+    getUsersStats
   }
 }) 

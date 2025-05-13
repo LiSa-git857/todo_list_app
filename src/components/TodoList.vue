@@ -1,6 +1,7 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue';
 import { useTodoStore } from '../stores/todoStore';
+import { useUserStore } from '../stores/userStore';
 import TodoItem from './TodoItem.vue';
 import TodoForm from './TodoForm.vue';
 import TodoFilter from './TodoFilter.vue';
@@ -9,6 +10,7 @@ import { ElMessageBox, ElNotification } from 'element-plus';
 import { formatDate } from '../utils/dateFormat';
 
 const todoStore = useTodoStore();
+const userStore = useUserStore();
 const activeFilter = ref('all');
 const activeSortBy = ref('createdAt');
 const editingTodo = ref(null);
@@ -143,6 +145,8 @@ const confirmDelete = (id) => {
       // 用户取消删除操作
     });
 };
+
+const isAdmin = computed(() => userStore.userRole === 'admin');
 </script>
 
 <template>
