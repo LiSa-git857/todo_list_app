@@ -1,0 +1,112 @@
+import { defineStore } from 'pinia'
+import { ref, computed } from 'vue'
+
+export const useTodoStore = defineStore('todo', () => {
+  // 状态
+  const todos = ref([])
+  
+  // 从localStorage加载数据
+  const loadTodos = () => {
+    const savedTodos = localStorage.getItem('todos')
+    if (savedTodos) {
+      todos.value = JSON.parse(savedTodos)
+    }
+  }
+  
+  // 保存数据到localStorage
+  const saveTodos = () => {
+    localStorage.setItem('todos', JSON.stringify(todos.value))
+  }
+  
+  // 添加新待办事项
+  const addTodo = (text, priority = 'normal', dueDate = null) => {
+    const newTodo = {
+      id: Date.now(),
+      text,
+      priority,
+      dueDate,
+      completed: false,
+      createdAt: new Date().toISOString()
+    }
+    todos.value.push(newTodo)
+    saveTodos()
+  }
+  
+  // 删除待办事项
+  const removeTodo = (id) => {
+    todos.value = todos.value.filter(todo => todo.id !== id)
+    saveTodos()
+  }
+  
+  // 更新待办事项
+  const updateTodo = (id, updates) => {
+    const index = todos.value.findIndex(todo => todo.id === id)
+    if (index !== -1) {
+      todos.value[index] = { ...todos.value[index], ...updates }
+      saveTodos()
+    }
+  }
+  
+  // 切换待办事项状态
+  const toggleTodo = (id) => {
+    const todo = todos.value.find(todo => todo.id === id)
+    if (todo) {
+      todo.completed = !todo.completed
+      saveTodos()
+    }
+  }
+  
+  // 计算属性：统计信息
+  const totalTodos = computed(() => todos.value.length)
+  const completedTodos = computed(() => todos.value.filter(todo => todo.completed).length)
+  const uncompletedTodos = computed(() => todos.value.filter(todo => !todo.completed).length)
+  const completionRate = computed(() => {
+    if (totalTodos.value === 0) return 0
+    return Math.round((completedTodos.value / totalTodos.value) * 100)
+  })
+  
+  // 过滤函数
+  const getFilteredTodos = (filter = 'all', sortBy = 'createdAt') => {
+    let filteredTodos = [...todos.value]
+    
+    // 应用过滤条件
+    if (filter === 'completed') {
+      filteredTodos = filteredTodos.filter(todo => todo.completed)
+    } else if (filter === 'active') {
+      filteredTodos = filteredTodos.filter(todo => !todo.completed)
+    }
+    
+    // 应用排序
+    filteredTodos.sort((a, b) => {
+      if (sortBy === 'priority') {
+        const priorityMap = { high: 3, normal: 2, low: 1 }
+        return priorityMap[b.priority] - priorityMap[a.priority]
+      } else if (sortBy === 'dueDate') {
+        if (!a.dueDate) return 1
+        if (!b.dueDate) return -1
+        return new Date(a.dueDate) - new Date(b.dueDate)
+      } else {
+        // 默认按创建时间排序
+        return new Date(b.createdAt) - new Date(a.createdAt)
+      }
+    })
+    
+    return filteredTodos
+  }
+  
+  // 初始加载
+  loadTodos()
+  
+  return { 
+    todos, 
+    addTodo, 
+    removeTodo, 
+    updateTodo, 
+    toggleTodo, 
+    totalTodos, 
+    completedTodos, 
+    uncompletedTodos, 
+    completionRate,
+    getFilteredTodos
+  }
+}) 

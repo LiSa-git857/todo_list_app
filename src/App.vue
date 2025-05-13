@@ -1,47 +1,79 @@
 <script setup>
-import HelloWorld from './components/HelloWorld.vue'
-import TheWelcome from './components/TheWelcome.vue'
+import TodoList from './components/TodoList.vue'
 </script>
 
 <template>
-  <header>
-    <img alt="Vue logo" class="logo" src="./assets/logo.svg" width="125" height="125" />
-
-    <div class="wrapper">
-      <HelloWorld msg="You did it!" />
-    </div>
-  </header>
-
-  <main>
-    <TheWelcome />
-  </main>
+  <el-container class="app-container">
+    <el-header height="auto">
+      <div class="app-header">
+        <img alt="Vue logo" class="logo" src="./assets/logo.svg" width="60" height="60" />
+        <h1 class="app-title">待办事项管理系统</h1>
+      </div>
+    </el-header>
+    
+    <el-main>
+      <TodoList />
+    </el-main>
+    
+    <el-footer>
+      <p>待办事项应用 &copy; {{ new Date().getFullYear() }}</p>
+    </el-footer>
+  </el-container>
 </template>
 
+<style>
+body {
+  margin: 0;
+  padding: 0;
+  background-color: #f5f7fa;
+  font-family: 'Helvetica Neue', Helvetica, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', '微软雅黑', Arial, sans-serif;
+}
+</style>
+
 <style scoped>
-header {
-  line-height: 1.5;
+.app-container {
+  min-height: 100vh;
 }
 
-.logo {
-  display: block;
-  margin: 0 auto 2rem;
+.app-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px 0;
+  gap: 15px;
 }
 
-@media (min-width: 1024px) {
-  header {
-    display: flex;
-    place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
+.app-title {
+  margin: 0;
+  color: #409EFF;
+  font-size: 1.8rem;
+}
+
+.el-header {
+  padding: 0;
+  background-color: white;
+  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+}
+
+.el-main {
+  padding: 20px;
+}
+
+.el-footer {
+  text-align: center;
+  color: #606266;
+  padding: 20px 0;
+  font-size: 14px;
+}
+
+@media (max-width: 768px) {
+  .app-title {
+    font-size: 1.4rem;
   }
-
+  
   .logo {
-    margin: 0 2rem 0 0;
-  }
-
-  header .wrapper {
-    display: flex;
-    place-items: flex-start;
-    flex-wrap: wrap;
+    width: 40px;
+    height: 40px;
   }
 }
 </style>

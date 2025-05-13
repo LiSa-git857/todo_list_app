@@ -1,0 +1,81 @@
+@startuml 待办事项应用功能架构
+
+' 设置主题和样式
+skinparam backgroundColor #FFFFFF
+skinparam componentStyle uml2
+skinparam packageStyle rectangle
+
+' 应用主要组件
+package "待办事项应用 (Vue 3)" {
+  component [App.vue] as app
+  component [TodoList.vue] as todoList
+  component [TodoItem.vue] as todoItem
+  component [TodoForm.vue] as todoForm
+  component [TodoFilter.vue] as todoFilter
+  component [TodoStats.vue] as todoStats
+  
+  ' 数据存储
+  database "LocalStorage" as localStorage
+  
+  ' 数据管理
+  package "Store / Composition API" as store {
+    component [待办事项状态] as todoState
+    component [待办事项操作] as todoActions
+  }
+}
+
+' 组件关系
+app --> todoList : 包含
+app --> todoForm : 包含
+app --> todoFilter : 包含
+app --> todoStats : 包含
+todoList --> todoItem : 包含多个
+
+' 数据流
+todoForm --> todoActions : 添加新待办事项
+todoItem --> todoActions : 更新/删除待办事项
+todoFilter --> todoState : 过滤待办事项
+todoStats --> todoState : 获取统计信息
+
+' 数据持久化
+todoActions --> localStorage : 保存数据
+localStorage --> todoState : 加载数据
+
+' 功能描述
+note right of todoForm
+  创建新的待办事项
+  - 输入待办事项标题
+  - 设置优先级（可选）
+  - 设置截止日期（可选）
+end note
+
+note right of todoItem
+  待办事项管理
+  - 查看待办事项详情
+  - 标记完成/未完成
+  - 编辑待办事项
+  - 删除待办事项
+end note
+
+note right of todoFilter
+  过滤和排序
+  - 按状态过滤（全部/完成/未完成）
+  - 按优先级排序
+  - 按日期排序
+end note
+
+note right of todoStats
+  统计信息
+  - 总待办事项数量
+  - 已完成数量
+  - 未完成数量
+  - 完成比例
+end note
+
+note bottom of localStorage
+  本地存储
+  - 保存待办事项列表
+  - 保存用户偏好设置
+end note
+
+@enduml 
