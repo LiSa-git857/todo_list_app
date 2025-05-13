@@ -95,6 +95,7 @@ const getPriorityLabel = (priority) => {
 .todo-content {
   flex: 1;
   margin: 0 15px;
+  min-width: 0; /* 防止内容溢出 */
 }
 
 .todo-header {
@@ -132,9 +133,22 @@ const getPriorityLabel = (priority) => {
 }
 
 @media (max-width: 550px) {
+  .todo-item {
+    padding: 10px;
+  }
+  
+  .todo-content {
+    margin: 0 10px;
+  }
+  
   .todo-header {
     flex-direction: column;
     align-items: flex-start;
+    gap: 5px;
+  }
+  
+  .todo-text {
+    font-size: 14px;
   }
   
   .todo-actions {

@@ -38,7 +38,8 @@ const todoStore = useTodoStore()
 
 <style scoped>
 .todo-stats {
-  max-width: 800px;
+  width: 100%;
+  max-width: 100%;
   margin: 0 auto 20px;
   padding: 15px 20px;
   border-radius: 8px;
@@ -69,9 +70,19 @@ h3 {
   color: #606266;
 }
 
-@media (max-width: 650px) {
+@media (max-width: 768px) {
+  .todo-stats {
+    padding: 15px;
+  }
+  
+  h3 {
+    font-size: 1.2rem;
+    margin-bottom: 10px;
+  }
+  
   .stats-container {
     grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
   }
 }
 

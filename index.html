@@ -3,8 +3,81 @@
   <head>
     <meta charset="UTF-8">
     <link rel="icon" href="/favicon.ico">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>待办事项应用</title>
+    <style>
+      /* 全局重置 */
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      
+      html, body {
+        height: 100%;
+        width: 100%;
+        overflow-x: hidden;
+        background-color: #f5f7fa;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+      
+      #app {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+      
+      .el-container, .app-container {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+      
+      .el-main {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+      }
+      
+      .main-content {
+        width: 100%;
+        max-width: 800px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+      
+      /* 全局样式：隐藏滚动条和指示器 */
+      .el-scrollbar__bar.is-horizontal,
+      .el-popper[x-placement^=bottom] .popper__arrow {
+        display: none !important;
+      }
+      
+      /* 修复Element Plus组件底部留白问题 */
+      .el-select-dropdown__wrap, 
+      .el-scrollbar__wrap,
+      .el-picker-panel {
+        margin: 0 !important;
+      }
+      
+      /* 修复移动端样式问题 */
+      @media (max-width: 768px) {
+        .el-message-box {
+          width: 90% !important;
+          max-width: 90% !important;
+        }
+        
+        .el-dialog {
+          width: 90% !important;
+          margin: 5% auto !important;
+        }
+      }
+    </style>
   </head>
   <body>
     <div id="app"></div>

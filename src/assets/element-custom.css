@@ -1,0 +1,42 @@
+/* 自定义Element Plus样式 */
+
+/* 隐藏底部滚动条指示器 */
+.el-scrollbar__bar.is-horizontal {
+  display: none !important;
+}
+
+/* 移除下拉菜单底部指示器 */
+.el-select-dropdown__wrap,
+.el-picker-panel,
+.el-date-picker,
+.el-picker-panel__sidebar,
+.el-date-picker__header,
+.el-picker-panel__content,
+.el-date-table,
+.el-year-table,
+.el-month-table {
+  margin-bottom: 0 !important;
+}
+
+/* 隐藏日期选择器底部指示器 */
+.el-picker-panel .el-scrollbar__bar {
+  display: none !important;
+}
+
+/* 移除箭头指示器 */
+.el-popper[x-placement^=bottom] .popper__arrow,
+.el-popper[x-placement^=top] .popper__arrow {
+  display: none !important;
+}
+
+/* 改进下拉菜单外观 */
+.el-select-dropdown {
+  margin: 0 !important;
+  border-radius: 4px !important;
+  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1) !important;
+}
+
+/* 移除底部多余留白 */
+.el-main {
+  padding-bottom: 0 !important;
+} 

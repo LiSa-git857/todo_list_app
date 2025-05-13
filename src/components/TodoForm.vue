@@ -117,12 +117,16 @@ const addTodo = () => {
 
 <style scoped>
 .todo-form {
-  max-width: 800px;
+  width: 100%;
+  max-width: 100%;
   margin: 0 auto 20px;
   padding: 20px;
   border-radius: 8px;
   box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
   background-color: white;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 h2 {
@@ -130,18 +134,34 @@ h2 {
   text-align: center;
   color: #409EFF;
   margin-bottom: 20px;
+  width: 100%;
+}
+
+.el-form {
+  width: 100%;
 }
 
 .form-options {
   display: flex;
   gap: 20px;
   margin-top: 10px;
+  width: 100%;
 }
 
 @media (max-width: 768px) {
+  .todo-form {
+    padding: 15px;
+    width: 100%;
+  }
+  
   .form-options {
     flex-direction: column;
     gap: 10px;
+  }
+  
+  h2 {
+    font-size: 1.4rem;
+    margin-bottom: 15px;
   }
 }
 </style> 

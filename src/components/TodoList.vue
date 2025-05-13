@@ -144,6 +144,8 @@ const confirmDelete = (id) => {
       v-model="dialogVisible"
       title="编辑待办事项"
       width="500px"
+      :append-to-body="true"
+      :close-on-click-modal="false"
     >
       <el-form>
         <el-form-item label="内容">
@@ -182,19 +184,25 @@ const confirmDelete = (id) => {
 <style scoped>
 .todo-app {
   width: 100%;
-  max-width: 800px;
+  max-width: 100%;
   margin: 0 auto;
-  padding: 20px 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .todo-header {
   text-align: center;
-  margin-bottom: 30px;
+  margin-bottom: 20px;
+  width: 100%;
 }
 
 h1 {
   color: #409EFF;
   font-size: 2rem;
+  margin: 0;
+  padding: 10px 0;
 }
 
 .todo-list-container {
@@ -202,7 +210,8 @@ h1 {
   border-radius: 8px;
   box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
   padding: 20px;
-  margin-bottom: 30px;
+  margin-bottom: 20px;
+  width: 100%;
 }
 
 h3 {
@@ -213,10 +222,32 @@ h3 {
 
 .todo-list {
   margin-top: 15px;
+  width: 100%;
 }
 
 .dialog-footer {
   padding-top: 10px;
   text-align: right;
+}
+
+/* 移除底部滚动条指示器 */
+:deep(.el-scrollbar__bar.is-horizontal) {
+  display: none !important;
+}
+
+@media (max-width: 768px) {
+  .todo-app {
+    width: 100%;
+    padding: 0;
+  }
+  
+  h1 {
+    font-size: 1.6rem;
+  }
+  
+  .todo-list-container {
+    padding: 15px;
+    width: 100%;
+  }
 }
 </style> 

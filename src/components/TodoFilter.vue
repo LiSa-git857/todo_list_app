@@ -76,7 +76,8 @@ const onSortChange = (value) => {
 
 <style scoped>
 .todo-filter {
-  max-width: 800px;
+  width: 100%;
+  max-width: 100%;
   margin: 0 auto 20px;
   padding: 15px 20px;
   border-radius: 8px;
@@ -110,9 +111,18 @@ h3 {
 }
 
 @media (max-width: 768px) {
+  .todo-filter {
+    padding: 15px;
+  }
+  
   .filter-container {
     flex-direction: column;
     align-items: flex-start;
+  }
+  
+  h3 {
+    font-size: 1.2rem;
+    margin-bottom: 10px;
   }
 }
 </style> 
