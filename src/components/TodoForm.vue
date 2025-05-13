@@ -108,7 +108,18 @@ const addTodo = () => {
             :shortcuts="dateShortcuts"
             :editable="false"
             :disabled-date="(time) => time.getTime() < Date.now() - 8.64e7"
-          />
+            class="date-picker"
+          >
+            <template #default="cell">
+              <div class="cell" :class="{ 'is-today': cell.isToday }">
+                {{ cell.text }}
+              </div>
+            </template>
+          </el-date-picker>
+          <div class="date-picker-tip" v-if="dueDate">
+            <el-icon><Clock /></el-icon>
+            <span>截止日期：{{ formatDate(dueDate) }}</span>
+          </div>
         </el-form-item>
       </div>
     </el-form>
@@ -146,6 +157,24 @@ h2 {
   gap: 20px;
   margin-top: 10px;
   width: 100%;
+}
+
+.date-picker {
+  width: 100%;
+}
+
+.date-picker-tip {
+  margin-top: 5px;
+  color: #606266;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.cell.is-today {
+  color: #409EFF;
+  font-weight: bold;
 }
 
 @media (max-width: 768px) {

@@ -1,11 +1,11 @@
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { useTodoStore } from '../stores/todoStore';
 import TodoItem from './TodoItem.vue';
 import TodoForm from './TodoForm.vue';
 import TodoFilter from './TodoFilter.vue';
 import TodoStats from './TodoStats.vue';
-import { ElMessageBox } from 'element-plus';
+import { ElMessageBox, ElNotification } from 'element-plus';
 import { formatDate } from '../utils/dateFormat';
 
 const todoStore = useTodoStore();
@@ -50,6 +50,51 @@ const dateShortcuts = [
 // 根据过滤条件获取待办事项
 const filteredTodos = computed(() => {
   return todoStore.getFilteredTodos(activeFilter.value, activeSortBy.value);
+});
+
+// 获取过期未完成的任务
+const overdueTasks = computed(() => {
+  return todoStore.todos.filter(todo => {
+    if (!todo.dueDate || todo.completed) return false
+    
+    const dueDate = new Date(todo.dueDate)
+    const today = new Date()
+    today.setHours(0, 0, 0, 0)
+    
+    return dueDate < today
+  })
+});
+
+// 显示过期任务数量
+const overdueTasksCount = computed(() => overdueTasks.value.length);
+
+// 检查过期任务并提醒
+const checkOverdueTasks = () => {
+  if (overdueTasksCount.value > 0) {
+    ElNotification({
+      title: '提醒',
+      message: `您有 ${overdueTasksCount.value} 个待办事项已过期未完成`,
+      type: 'warning',
+      duration: 5000
+    });
+  }
+};
+
+// 组件挂载时检查过期任务
+onMounted(() => {
+  checkOverdueTasks();
+  
+  // 每天检查一次过期任务
+  // 计算到第二天凌晨的毫秒数
+  const now = new Date();
+  const tomorrow = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
+  const timeToTomorrow = tomorrow - now;
+  
+  setTimeout(() => {
+    checkOverdueTasks();
+    // 设置每24小时检查一次
+    setInterval(checkOverdueTasks, 24 * 60 * 60 * 1000);
+  }, timeToTomorrow);
 });
 
 const handleFilterChange = (filter) => {
@@ -105,6 +150,29 @@ const confirmDelete = (id) => {
     <div class="todo-header">
       <h1>我的待办事项</h1>
     </div>
+    
+    <!-- 过期任务提醒 -->
+    <el-alert
+      v-if="overdueTasksCount > 0"
+      :title="`您有 ${overdueTasksCount} 个待办事项已过期未完成`"
+      type="warning"
+      show-icon
+      :closable="false"
+      class="overdue-alert"
+    >
+      <template #default>
+        <div class="overdue-alert-content">
+          请尽快处理这些过期任务，或者更新截止日期。
+          <el-button 
+            type="primary" 
+            size="small" 
+            @click="activeFilter = 'active'; activeSortBy = 'dueDate'"
+          >
+            查看过期任务
+          </el-button>
+        </div>
+      </template>
+    </el-alert>
     
     <!-- 待办事项统计 -->
     <TodoStats />
@@ -167,8 +235,13 @@ const confirmDelete = (id) => {
             value-format="YYYY-MM-DD"
             :shortcuts="dateShortcuts"
             :editable="false"
+            :disabled-date="(time) => time.getTime() < Date.now() - 8.64e7"
             clearable
           />
+          <div v-if="editForm.dueDate" class="date-tip">
+            <el-icon><Clock /></el-icon>
+            <span>截止日期：{{ formatDate(editForm.dueDate) }}</span>
+          </div>
         </el-form-item>
       </el-form>
       <template #footer>
@@ -205,6 +278,18 @@ h1 {
   padding: 10px 0;
 }
 
+.overdue-alert {
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+.overdue-alert-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 8px;
+}
+
 .todo-list-container {
   background-color: white;
   border-radius: 8px;
@@ -230,6 +315,15 @@ h3 {
   text-align: right;
 }
 
+.date-tip {
+  margin-top: 5px;
+  color: #606266;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
 /* 移除底部滚动条指示器 */
 :deep(.el-scrollbar__bar.is-horizontal) {
   display: none !important;
@@ -248,6 +342,16 @@ h3 {
   .todo-list-container {
     padding: 15px;
     width: 100%;
+  }
+  
+  .overdue-alert-content {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  
+  .overdue-alert-content button {
+    margin-top: 5px;
   }
 }
 </style> 

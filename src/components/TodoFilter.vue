@@ -61,7 +61,7 @@ const onSortChange = (value) => {
       
       <div class="filter-group">
         <span class="filter-label">排序方式：</span>
-        <el-select v-model="localSortBy" @change="onSortChange" placeholder="排序方式">
+        <el-select v-model="localSortBy" @change="onSortChange" placeholder="排序方式" style="min-width: 120px;">
           <el-option
             v-for="option in sortOptions"
             :key="option.value"
@@ -107,6 +107,8 @@ h3 {
 
 .filter-label {
   font-weight: bold;
+  white-space: nowrap;
+  text-overflow: ellipsis;
   color: #606266;
 }
 

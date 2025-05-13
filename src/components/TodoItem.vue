@@ -1,6 +1,7 @@
 <script setup>
 import { useTodoStore } from '../stores/todoStore'
 import { formatDate, getRelativeDate } from '../utils/dateFormat'
+import { computed } from 'vue'
 
 const props = defineProps({
   todo: {
@@ -28,10 +29,27 @@ const getPriorityLabel = (priority) => {
     default: return '中'
   }
 }
+
+// 检查任务是否已过期但未完成
+const isOverdue = computed(() => {
+  if (!props.todo.dueDate || props.todo.completed) return false
+  
+  const dueDate = new Date(props.todo.dueDate)
+  const today = new Date()
+  today.setHours(0, 0, 0, 0)
+  
+  return dueDate < today
+})
+
+// 获取截止日期标签的类型
+const getDueDateTagType = computed(() => {
+  if (isOverdue.value) return 'danger'
+  return 'success'
+})
 </script>
 
 <template>
-  <div class="todo-item" :class="{ completed: todo.completed }">
+  <div class="todo-item" :class="{ completed: todo.completed, overdue: isOverdue }">
     <el-checkbox 
       v-model="todo.completed" 
       @change="todoStore.toggleTodo(todo.id)"
@@ -45,15 +63,24 @@ const getPriorityLabel = (priority) => {
           <el-tag v-if="todo.priority" :type="getPriorityType(todo.priority)" size="small">
             {{ getPriorityLabel(todo.priority) }}
           </el-tag>
-          <el-tag v-if="todo.dueDate" type="success" size="small">
+          <el-tag v-if="todo.dueDate" :type="getDueDateTagType" size="small">
             <el-tooltip
               :content="formatDate(todo.dueDate)"
               placement="top"
             >
-              <span>截止: {{ getRelativeDate(todo.dueDate) }}</span>
+              <span>
+                <span v-if="isOverdue" style="margin-right: 4px">
+                  <el-icon class="overdue-icon"><Warning /></el-icon>
+                </span>
+                截止: {{ getRelativeDate(todo.dueDate) }}
+              </span>
             </el-tooltip>
           </el-tag>
         </div>
+      </div>
+      <div v-if="isOverdue" class="overdue-warning">
+        <el-icon><Warning /></el-icon> 
+        此任务已过期，请尽快完成
       </div>
     </div>
     
@@ -130,6 +157,27 @@ const getPriorityLabel = (priority) => {
 .completed .todo-text {
   text-decoration: line-through;
   color: #888;
+}
+
+/* 过期任务样式 */
+.overdue {
+  border-left: 4px solid #F56C6C;
+  background-color: #FEF0F0;
+}
+
+.overdue-warning {
+  color: #F56C6C;
+  font-size: 12px;
+  margin-top: 5px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.overdue-icon {
+  margin-right: 2px;
+  display: inline-flex;
+  vertical-align: middle;
 }
 
 @media (max-width: 550px) {
