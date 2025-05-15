@@ -62,27 +62,15 @@ export const useTodoStore = defineStore('todo', () => {
   
   // 计算属性：统计信息
   const totalTodos = computed(() => {
-    if (userStore.userRole === 'admin') {
-      return todos.value.length
-    } else {
-      return getUserTodos().length
-    }
+    return getUserTodos().length
   })
   
   const completedTodos = computed(() => {
-    if (userStore.userRole === 'admin') {
-      return todos.value.filter(todo => todo.completed).length
-    } else {
-      return getUserTodos().filter(todo => todo.completed).length
-    }
+    return getUserTodos().filter(todo => todo.completed).length
   })
   
   const uncompletedTodos = computed(() => {
-    if (userStore.userRole === 'admin') {
-      return todos.value.filter(todo => !todo.completed).length
-    } else {
-      return getUserTodos().filter(todo => !todo.completed).length
-    }
+    return getUserTodos().filter(todo => !todo.completed).length
   })
   
   const completionRate = computed(() => {
@@ -106,14 +94,11 @@ export const useTodoStore = defineStore('todo', () => {
     // 默认获取当前用户的待办事项，管理员可以指定用户ID或获取所有待办事项
     let filteredTodos = []
     
-    if (userStore.userRole === 'admin' && userId === null) {
-      // 管理员查看所有待办事项
-      filteredTodos = [...todos.value]
-    } else if (userStore.userRole === 'admin' && userId !== null) {
+    if (userStore.userRole === 'admin' && userId !== null) {
       // 管理员查看特定用户的待办事项
       filteredTodos = [...todos.value.filter(todo => todo.userId === userId)]
     } else {
-      // 普通用户只能查看自己的待办事项
+      // 普通用户和管理员都只查看自己的待办事项
       filteredTodos = [...getUserTodos()]
     }
     

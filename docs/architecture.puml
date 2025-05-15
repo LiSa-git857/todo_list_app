@@ -1,81 +1,173 @@
-@startuml 待办事项应用功能架构
+@startuml 待办事项管理系统架构图
 
-' 设置主题和样式
-skinparam backgroundColor #FFFFFF
-skinparam componentStyle uml2
-skinparam packageStyle rectangle
+!define RECTANGLE class
+!define COMPONENT component
 
-' 应用主要组件
-package "待办事项应用 (Vue 3)" {
-  component [App.vue] as app
-  component [TodoList.vue] as todoList
-  component [TodoItem.vue] as todoItem
-  component [TodoForm.vue] as todoForm
-  component [TodoFilter.vue] as todoFilter
-  component [TodoStats.vue] as todoStats
+' 定义颜色
+!define PRIMARY_COLOR #e6f7ff
+!define SECONDARY_COLOR #eee
+!define ACCENT_COLOR #91caff
+!define BORDER_COLOR #1890ff
+!define STORE_COLOR #f6ffed
+!define COMPONENT_COLOR #fff6d2
+!define VIEW_COLOR #f0f5ff
+!define AUTH_COLOR #fff2e8
+
+' 定义样式
+skinparam rectangle {
+  BackgroundColor SECONDARY_COLOR
+  BorderColor BORDER_COLOR
+  BorderThickness 1
+  Shadowing false
+  StereotypeFontSize 12
+}
+
+skinparam package {
+  BackgroundColor white
+  BorderColor BORDER_COLOR
+  BorderThickness 1
+  Shadowing false
+}
+
+skinparam arrow {
+  Color BLACK
+  Thickness 1
+}
+
+' 主要组件
+package "前端应用" {
+  package "核心组件" {
+    RECTANGLE App #VIEW_COLOR [
+      App.vue
+      ----
+      应用入口
+      布局和导航
+      用户身份展示
+    ]
+    
+    RECTANGLE Router #ACCENT_COLOR [
+      Router
+      ----
+      路由配置
+      导航守卫
+      权限控制
+    ]
+  }
   
-  ' 数据存储
-  database "LocalStorage" as localStorage
+  package "状态管理" {
+    RECTANGLE UserStore #STORE_COLOR [
+      UserStore
+      ----
+      用户信息
+      权限管理
+      登录/注销
+    ]
+    
+    RECTANGLE TodoStore #STORE_COLOR [
+      TodoStore
+      ----
+      待办事项数据
+      CRUD操作
+      过滤和排序
+      用户统计
+    ]
+  }
   
-  ' 数据管理
-  package "Store / Composition API" as store {
-    component [待办事项状态] as todoState
-    component [待办事项操作] as todoActions
+  package "视图" {
+    package "认证" {
+      RECTANGLE LoginView #AUTH_COLOR [
+        LoginForm
+        ----
+        用户登录
+        身份验证
+      ]
+    }
+    
+    package "普通用户功能" {
+      RECTANGLE TodoListView #VIEW_COLOR [
+        TodoList
+        ----
+        展示个人待办事项
+        过滤和排序
+        任务统计
+      ]
+      
+      RECTANGLE TodoFormComponent #COMPONENT_COLOR [
+        TodoForm
+        ----
+        添加新待办事项
+        设置优先级
+        设置截止日期
+      ]
+      
+      RECTANGLE TodoFilterComponent #COMPONENT_COLOR [
+        TodoFilter
+        ----
+        过滤条件选择
+        排序方式选择
+      ]
+      
+      RECTANGLE TodoItemComponent #COMPONENT_COLOR [
+        TodoItem
+        ----
+        显示待办事项
+        标记完成/未完成
+        编辑和删除
+      ]
+      
+      RECTANGLE TodoStatsComponent #COMPONENT_COLOR [
+        TodoStats
+        ----
+        统计待办事项
+        显示完成率
+      ]
+    }
+    
+    package "管理员功能" {
+      RECTANGLE AdminView #VIEW_COLOR [
+        AdminUserStats
+        ----
+        所有用户待办事项统计
+        查看用户详情
+        操作用户待办事项
+      ]
+    }
   }
 }
 
-' 组件关系
-app --> todoList : 包含
-app --> todoForm : 包含
-app --> todoFilter : 包含
-app --> todoStats : 包含
-todoList --> todoItem : 包含多个
+' 关系
+App --> Router : 路由注册
+Router --> LoginView : 路由导航
+Router --> TodoListView : 路由导航
+Router --> AdminView : 路由导航(管理员)
+
+UserStore --> App : 提供用户信息
+UserStore --> Router : 权限验证
+UserStore --> LoginView : 登录/注销
+UserStore --> TodoListView : 权限控制
+UserStore --> TodoItemComponent : 权限控制
+
+TodoStore --> TodoListView : 数据源
+TodoStore --> TodoItemComponent : CRUD操作
+TodoStore --> TodoStatsComponent : 统计数据
+TodoStore --> AdminView : 用户待办数据
+
+TodoListView --> TodoFormComponent : 包含
+TodoListView --> TodoFilterComponent : 包含
+TodoListView --> TodoItemComponent : 包含
+TodoListView --> TodoStatsComponent : 包含
 
 ' 数据流
-todoForm --> todoActions : 添加新待办事项
-todoItem --> todoActions : 更新/删除待办事项
-todoFilter --> todoState : 过滤待办事项
-todoStats --> todoState : 获取统计信息
-
-' 数据持久化
-todoActions --> localStorage : 保存数据
-localStorage --> todoState : 加载数据
-
-' 功能描述
-note right of todoForm
-  创建新的待办事项
-  - 输入待办事项标题
-  - 设置优先级（可选）
-  - 设置截止日期（可选）
+note right of UserStore
+  用户角色:
+  1. 管理员(admin): 所有权限
+  2. 普通用户(user): 有限权限
 end note
 
-note right of todoItem
-  待办事项管理
-  - 查看待办事项详情
-  - 标记完成/未完成
-  - 编辑待办事项
-  - 删除待办事项
-end note
-
-note right of todoFilter
-  过滤和排序
-  - 按状态过滤（全部/完成/未完成）
-  - 按优先级排序
-  - 按日期排序
-end note
-
-note right of todoStats
-  统计信息
-  - 总待办事项数量
-  - 已完成数量
-  - 未完成数量
-  - 完成比例
-end note
-
-note bottom of localStorage
-  本地存储
-  - 保存待办事项列表
-  - 保存用户偏好设置
+note right of TodoStore
+  改进后的数据处理:
+  - 管理员个人页面仅显示自己的待办事项
+  - 管理员统计页面可查看所有用户的待办事项
 end note
 
 @enduml 

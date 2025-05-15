@@ -14,6 +14,7 @@ const canAddTodo = userStore.hasPermission('add')
 const newTodo = ref('')
 const priority = ref('normal')
 const dueDate = ref('')
+const adding = ref(false)
 
 const priorityOptions = [
   { value: 'high', label: '高' },
@@ -60,15 +61,21 @@ const addTodo = () => {
   }
   
   if (newTodo.value.trim()) {
-    todoStore.addTodo(newTodo.value, priority.value, dueDate.value || null)
-    ElMessage({
-      message: '待办事项添加成功',
-      type: 'success'
-    })
-    // 重置表单
-    newTodo.value = ''
-    priority.value = 'normal'
-    dueDate.value = ''
+    adding.value = true
+    
+    try {
+      todoStore.addTodo(newTodo.value, priority.value, dueDate.value || null)
+      ElMessage({
+        message: '待办事项添加成功',
+        type: 'success'
+      })
+      // 重置表单
+      newTodo.value = ''
+      priority.value = 'normal'
+      dueDate.value = ''
+    } finally {
+      adding.value = false
+    }
   } else {
     ElMessage({
       message: '请输入待办事项内容',
@@ -83,19 +90,28 @@ const addTodo = () => {
     <h2>添加新待办事项</h2>
     <el-form @submit.prevent="addTodo">
       <el-form-item>
-        <el-input 
-          v-model="newTodo" 
-          placeholder="输入待办事项..." 
-          clearable
-          @keyup.enter="addTodo"
-          :disabled="!canAddTodo"
-        >
-          <template #append>
-            <el-button @click="addTodo" type="primary" :disabled="!canAddTodo">
-              添加
-            </el-button>
-          </template>
-        </el-input>
+        <div class="input-with-button">
+          <el-input 
+            v-model="newTodo" 
+            placeholder="输入待办事项..." 
+            clearable
+            @keyup.enter="addTodo"
+            :disabled="!canAddTodo"
+            class="todo-input"
+          >
+          </el-input>
+          <el-button 
+            @click="addTodo" 
+            type="primary" 
+            :disabled="!canAddTodo"
+            class="add-button"
+            :loading="adding"
+            size="large"
+            icon="Plus"
+          >
+            添加
+          </el-button>
+        </div>
       </el-form-item>
       
       <div class="form-options">
@@ -169,6 +185,17 @@ h2 {
   width: 100%;
 }
 
+.input-with-button {
+  display: flex;
+  gap: 10px;
+  width: 100%;
+  align-items: center;
+}
+
+.todo-input {
+  flex: 1;
+}
+
 .form-options {
   display: flex;
   gap: 20px;
@@ -192,6 +219,22 @@ h2 {
 .cell.is-today {
   color: #409EFF;
   font-weight: bold;
+}
+
+.add-button {
+  padding: 12px 20px;
+  font-weight: 500;
+  transition: all 0.3s;
+  border-radius: 4px;
+}
+
+.add-button:not(:disabled):hover {
+  transform: translateY(-2px);
+  box-shadow: 0 2px 12px rgba(64, 158, 255, 0.4);
+}
+
+.add-button:not(:disabled):active {
+  transform: translateY(0);
 }
 
 @media (max-width: 768px) {
