@@ -1,0 +1,60 @@
+---
+description: AI rules derived by SpecStory from the project AI interaction history
+globs: *
+---
+
+## PROJECT DOCUMENTATION & CONTEXT SYSTEM
+
+- Project Structure:  The project structure is documented in the `README.md` file.  It includes details of the `src`, `docs`, `public`, and other directories, and the files within them.  The structure is also represented visually in `docs/architecture.puml`.  PowerShell commands `Get-ChildItem -Recurse -File | Where-Object { $_.FullName -notlike "*\node_modules\*" -and $_.FullName -notlike "*\dist\*" } | Select-Object -ExpandProperty FullName` and `Get-ChildItem -Recurse -Force | Where-Object { $_.FullName -notlike "*\node_modules\*" -and $_.FullName -notlike "*\dist\*" } | Select-Object FullName | Format-Table -HideTableHeaders | Out-String`  were explored for generating the project structure, but ultimately a manual listing was preferred.
+
+- README.md updates:  The `README.md` file should always include a description of the project structure.  This includes source code directories, components, state management, utility functions, and their roles.  Version:  Initial structure documented 2025-05-13.
+
+- PlantUML Diagrams:  PlantUML diagrams are used to illustrate project architecture (`docs/architecture.puml`).  Users should install the PlantUML plugin for their IDE or use an online viewer like [PlantUML Web Server](http://www.plantuml.com/plantuml/uml/). Version: Initial diagram generated 2025-05-13. A revised diagram reflecting the updated architecture has been generated and saved to `docs/architecture.puml` on [date].
+
+- Database Schema: Database schema is defined in `docs/database_schema.sql` (MySQL) and `docs/database_schema_sqlserver.sql` (SQL Server).  ER Diagram is in `docs/database.puml`. API documentation is in `docs/api_endpoints.md`.
+
+
+## TECH STACK
+
+- Frontend: Vue 3, Pinia, Element Plus
+- Backend: Node.js, Express.js, mssql, bcryptjs, jsonwebtoken, dotenv, nodemon
+- Database:  SQL Server (currently used) and MySQL (alternative).  SQLite is also a possibility for simpler setups.
+
+
+## CODING STANDARDS
+
+- Consistent code style: Follow the standard Vue.js and Element Plus style guides.
+- Meaningful variable and function names: Use descriptive names to improve code readability.
+- Proper commenting: Add comments to explain complex logic or non-obvious code sections.
+- Error Handling: Implement comprehensive error handling mechanisms for all API endpoints and frontend interactions.
+
+
+## WORKFLOW & RELEASE RULES
+
+- Version Control: Use Git for version control.
+- Commit Messages: Write clear and concise commit messages.
+- Code Reviews: Conduct code reviews before merging changes.
+- Testing: Unit and integration tests should be written for all critical components.
+- Deployment:  Deployment procedures should be defined and documented.
+
+
+## DEBUGGING
+
+- Console Logging: Use console logging for debugging purposes.
+- Browser Developer Tools: Utilize browser developer tools for debugging frontend issues.
+- Node.js Debugger: Use the Node.js debugger for backend debugging.
+
+
+## USER ROLES & PERMISSIONS
+
+- Admin: Full access to all features and data.  Can add, edit, delete, check, and uncheck todos for all users.  Can view all user stats.
+- User: Can add and complete their own todos but cannot uncheck completed todos.  Cannot view other users' data.
+
+
+## API DESIGN
+
+- API Endpoints: API endpoints are defined in the `docs/api_endpoints.md` file.  The base URL is `/api/v1`.  Authentication is handled via JWT.  Error responses follow a consistent JSON format.
+
+## DATABASE
+
+- Tables: The database schema includes `users`, `todos`, `permissions`, and `user_activity_logs` tables.
