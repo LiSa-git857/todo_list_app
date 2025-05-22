@@ -139,14 +139,8 @@ const addTodo = () => {
             class="date-picker"
             :disabled="!canAddTodo"
           >
-            <template #default="cell">
-              <div class="cell" :class="{ 'is-today': cell.isToday }">
-                {{ cell.text }}
-              </div>
-            </template>
           </el-date-picker>
           <div class="date-picker-tip" v-if="dueDate">
-            <el-icon><Clock /></el-icon>
             <span>截止日期：{{ formatDate(dueDate) }}</span>
           </div>
         </el-form-item>
