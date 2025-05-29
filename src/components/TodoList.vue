@@ -1,13 +1,15 @@
 <script setup>
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed, onMounted, defineAsyncComponent } from 'vue';
 import { useTodoStore } from '../stores/todoStore';
 import { useUserStore } from '../stores/userStore';
-import TodoItem from './TodoItem.vue';
-import TodoForm from './TodoForm.vue';
-import TodoFilter from './TodoFilter.vue';
-import TodoStats from './TodoStats.vue';
 import { ElMessageBox, ElNotification } from 'element-plus';
 import { formatDate } from '../utils/dateFormat';
+
+// 使用异步组件懒加载
+const TodoItem = defineAsyncComponent(() => import('./TodoItem.vue'));
+const TodoForm = defineAsyncComponent(() => import('./TodoForm.vue'));
+const TodoFilter = defineAsyncComponent(() => import('./TodoFilter.vue'));
+const TodoStats = defineAsyncComponent(() => import('./TodoStats.vue'));
 
 const todoStore = useTodoStore();
 const userStore = useUserStore();
