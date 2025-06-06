@@ -19,7 +19,7 @@ const adding = ref(false)
 const priorityOptions = [
   { value: 'high', label: '高' },
   { value: 'normal', label: '中' },
-  { value: 'low', label: '低' }
+  { value: 'low', label: '低' },
 ]
 
 // 日期选择快捷方式
@@ -51,7 +51,7 @@ const dateShortcuts = [
       date.setMonth(date.getMonth() + 1)
       return date
     })(),
-  }
+  },
 ]
 
 const addTodo = () => {
@@ -59,15 +59,15 @@ const addTodo = () => {
     ElMessage.error('您没有添加待办事项的权限')
     return
   }
-  
+
   if (newTodo.value.trim()) {
     adding.value = true
-    
+
     try {
       todoStore.addTodo(newTodo.value, priority.value, dueDate.value || null)
       ElMessage({
         message: '待办事项添加成功',
-        type: 'success'
+        type: 'success',
       })
       // 重置表单
       newTodo.value = ''
@@ -79,7 +79,7 @@ const addTodo = () => {
   } else {
     ElMessage({
       message: '请输入待办事项内容',
-      type: 'warning'
+      type: 'warning',
     })
   }
 }
@@ -91,18 +91,17 @@ const addTodo = () => {
     <el-form @submit.prevent="addTodo">
       <el-form-item>
         <div class="input-with-button">
-          <el-input 
-            v-model="newTodo" 
-            placeholder="输入待办事项..." 
+          <el-input
+            v-model="newTodo"
+            placeholder="输入待办事项..."
             clearable
             @keyup.enter="addTodo"
             :disabled="!canAddTodo"
             class="todo-input"
-          >
-          </el-input>
-          <el-button 
-            @click="addTodo" 
-            type="primary" 
+          ></el-input>
+          <el-button
+            @click="addTodo"
+            type="primary"
             :disabled="!canAddTodo"
             class="add-button"
             :loading="adding"
@@ -113,10 +112,15 @@ const addTodo = () => {
           </el-button>
         </div>
       </el-form-item>
-      
+
       <div class="form-options">
         <el-form-item label="优先级">
-          <el-select style="width: 100px" v-model="priority" placeholder="选择优先级" :disabled="!canAddTodo">
+          <el-select
+            style="width: 100px"
+            v-model="priority"
+            placeholder="选择优先级"
+            :disabled="!canAddTodo"
+          >
             <el-option
               v-for="item in priorityOptions"
               :key="item.value"
@@ -125,7 +129,7 @@ const addTodo = () => {
             />
           </el-select>
         </el-form-item>
-        
+
         <el-form-item label="截止日期">
           <el-date-picker
             v-model="dueDate"
@@ -135,20 +139,17 @@ const addTodo = () => {
             value-format="YYYY-MM-DD"
             :shortcuts="dateShortcuts"
             :editable="false"
-            :disabled-date="(time) => time.getTime() < Date.now() - 8.64e7"
+            :disabled-date="time => time.getTime() < Date.now() - 8.64e7"
             class="date-picker"
             :disabled="!canAddTodo"
-          >
-          </el-date-picker>
+          ></el-date-picker>
           <div class="date-picker-tip" v-if="dueDate">
             <span>截止日期：{{ formatDate(dueDate) }}</span>
           </div>
         </el-form-item>
       </div>
-      
-      <el-alert v-if="!canAddTodo" type="warning" show-icon>
-        您没有添加待办事项的权限
-      </el-alert>
+
+      <el-alert v-if="!canAddTodo" type="warning" show-icon> 您没有添加待办事项的权限 </el-alert>
     </el-form>
   </div>
 </template>
@@ -170,7 +171,7 @@ const addTodo = () => {
 h2 {
   margin-top: 0;
   text-align: center;
-  color: #409EFF;
+  color: #409eff;
   margin-bottom: 20px;
   width: 100%;
 }
@@ -211,7 +212,7 @@ h2 {
 }
 
 .cell.is-today {
-  color: #409EFF;
+  color: #409eff;
   font-weight: bold;
 }
 
@@ -236,15 +237,15 @@ h2 {
     padding: 15px;
     width: 100%;
   }
-  
+
   .form-options {
     flex-direction: column;
     gap: 10px;
   }
-  
+
   h2 {
     font-size: 1.4rem;
     margin-bottom: 15px;
   }
 }
-</style> 
+</style>

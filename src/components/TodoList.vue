@@ -1,27 +1,27 @@
 <script setup>
-import { ref, computed, onMounted, defineAsyncComponent } from 'vue';
-import { useTodoStore } from '../stores/todoStore';
-import { useUserStore } from '../stores/userStore';
-import { ElMessageBox, ElNotification } from 'element-plus';
-import { formatDate } from '../utils/dateFormat';
+import { ref, computed, onMounted, defineAsyncComponent } from 'vue'
+import { useTodoStore } from '../stores/todoStore'
+import { useUserStore } from '../stores/userStore'
+import { ElMessageBox, ElNotification } from 'element-plus'
+import { formatDate } from '../utils/dateFormat'
 
 // 使用异步组件懒加载
-const TodoItem = defineAsyncComponent(() => import('./TodoItem.vue'));
-const TodoForm = defineAsyncComponent(() => import('./TodoForm.vue'));
-const TodoFilter = defineAsyncComponent(() => import('./TodoFilter.vue'));
-const TodoStats = defineAsyncComponent(() => import('./TodoStats.vue'));
+const TodoItem = defineAsyncComponent(() => import('./TodoItem.vue'))
+const TodoForm = defineAsyncComponent(() => import('./TodoForm.vue'))
+const TodoFilter = defineAsyncComponent(() => import('./TodoFilter.vue'))
+const TodoStats = defineAsyncComponent(() => import('./TodoStats.vue'))
 
-const todoStore = useTodoStore();
-const userStore = useUserStore();
-const activeFilter = ref('all');
-const activeSortBy = ref('createdAt');
-const editingTodo = ref(null);
-const dialogVisible = ref(false);
+const todoStore = useTodoStore()
+const userStore = useUserStore()
+const activeFilter = ref('all')
+const activeSortBy = ref('createdAt')
+const editingTodo = ref(null)
+const dialogVisible = ref(false)
 const editForm = ref({
   text: '',
   priority: 'normal',
-  dueDate: null
-});
+  dueDate: null,
+})
 
 // 日期选择快捷方式
 const dateShortcuts = [
@@ -48,29 +48,29 @@ const dateShortcuts = [
   {
     text: '不设置',
     value: null,
-  }
-];
+  },
+]
 
 // 根据过滤条件获取待办事项
 const filteredTodos = computed(() => {
-  return todoStore.getFilteredTodos(activeFilter.value, activeSortBy.value);
-});
+  return todoStore.getFilteredTodos(activeFilter.value, activeSortBy.value)
+})
 
 // 获取过期未完成的任务
 const overdueTasks = computed(() => {
   return todoStore.todos.filter(todo => {
     if (!todo.dueDate || todo.completed) return false
-    
+
     const dueDate = new Date(todo.dueDate)
     const today = new Date()
     today.setHours(0, 0, 0, 0)
-    
+
     return dueDate < today
   })
-});
+})
 
 // 显示过期任务数量
-const overdueTasksCount = computed(() => overdueTasks.value.length);
+const overdueTasksCount = computed(() => overdueTasks.value.length)
 
 // 检查过期任务并提醒
 const checkOverdueTasks = () => {
@@ -79,76 +79,78 @@ const checkOverdueTasks = () => {
       title: '提醒',
       message: `您有 ${overdueTasksCount.value} 个待办事项已过期未完成`,
       type: 'warning',
-      duration: 5000
-    });
+      duration: 5000,
+    })
   }
-};
+}
 
 // 组件挂载时检查过期任务
 onMounted(() => {
-  checkOverdueTasks();
-  
+  checkOverdueTasks()
+
   // 每天检查一次过期任务
   // 计算到第二天凌晨的毫秒数
-  const now = new Date();
-  const tomorrow = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
-  const timeToTomorrow = tomorrow - now;
-  
-  setTimeout(() => {
-    checkOverdueTasks();
+  const now = new Date()
+  const tomorrow = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1)
+  const timeToTomorrow = tomorrow - now
+
+  window.setTimeout(() => {
+    checkOverdueTasks()
     // 设置每24小时检查一次
-    setInterval(checkOverdueTasks, 24 * 60 * 60 * 1000);
-  }, timeToTomorrow);
-});
+    window.setInterval(checkOverdueTasks, 24 * 60 * 60 * 1000)
+  }, timeToTomorrow)
+})
 
-const handleFilterChange = (filter) => {
-  activeFilter.value = filter;
-};
+const handleFilterChange = filter => {
+  activeFilter.value = filter
+}
 
-const handleSortChange = (sortBy) => {
-  activeSortBy.value = sortBy;
-};
+const handleSortChange = sortBy => {
+  activeSortBy.value = sortBy
+}
 
-const openEditDialog = (todo) => {
-  editingTodo.value = todo;
+const openEditDialog = todo => {
+  editingTodo.value = todo
   editForm.value = {
     text: todo.text,
     priority: todo.priority || 'normal',
-    dueDate: todo.dueDate || null
-  };
-  dialogVisible.value = true;
-};
+    dueDate: todo.dueDate || null,
+  }
+  dialogVisible.value = true
+}
 
 const saveEdit = () => {
   if (editForm.value.text.trim()) {
     todoStore.updateTodo(editingTodo.value.id, {
       text: editForm.value.text,
       priority: editForm.value.priority,
-      dueDate: editForm.value.dueDate
-    });
-    dialogVisible.value = false;
+      dueDate: editForm.value.dueDate,
+    })
+    dialogVisible.value = false
   }
-};
+}
 
-const confirmDelete = (id) => {
-  ElMessageBox.confirm(
-    '确定要删除这个待办事项吗？',
-    '提示',
-    {
-      confirmButtonText: '确定',
-      cancelButtonText: '取消',
-      type: 'warning',
-    }
-  )
+const confirmDelete = id => {
+  ElMessageBox.confirm('确定要删除这个待办事项吗？', '提示', {
+    confirmButtonText: '确定',
+    cancelButtonText: '取消',
+    type: 'warning',
+  })
     .then(() => {
-      todoStore.removeTodo(id);
+      todoStore.removeTodo(id)
     })
     .catch(() => {
       // 用户取消删除操作
-    });
-};
+    })
+}
 
-const isAdmin = computed(() => userStore.userRole === 'admin');
+const isAdmin = computed(() => userStore.userRole === 'admin')
+
+// 查看过期任务
+const viewOverdueTasks = () => {
+  activeFilter.value = 'active'
+  activeSortBy.value = 'dueDate'
+}
 </script>
 
 <template>
@@ -156,7 +158,7 @@ const isAdmin = computed(() => userStore.userRole === 'admin');
     <div class="todo-header">
       <h1>我的待办事项</h1>
     </div>
-    
+
     <!-- 过期任务提醒 -->
     <el-alert
       v-if="overdueTasksCount > 0"
@@ -169,50 +171,47 @@ const isAdmin = computed(() => userStore.userRole === 'admin');
       <template #default>
         <div class="overdue-alert-content">
           请尽快处理这些过期任务，或者更新截止日期。
-          <el-button 
-            type="primary" 
-            size="small" 
-            @click="activeFilter = 'active'; activeSortBy = 'dueDate'"
+          <el-button
+            type="primary"
+            size="small"
+            @click="viewOverdueTasks"
           >
             查看过期任务
           </el-button>
         </div>
       </template>
     </el-alert>
-    
+
     <!-- 待办事项统计 -->
     <TodoStats />
-    
+
     <!-- 添加新待办事项 -->
     <TodoForm />
-    
+
     <!-- 过滤和排序 -->
-    <TodoFilter 
-      :active-filter="activeFilter" 
+    <TodoFilter
+      :active-filter="activeFilter"
       :active-sort-by="activeSortBy"
       @filter-change="handleFilterChange"
       @sort-change="handleSortChange"
     />
-    
+
     <!-- 待办事项列表 -->
     <div class="todo-list-container">
       <h3>待办事项列表</h3>
-      
-      <el-empty 
-        v-if="filteredTodos.length === 0" 
-        description="没有待办事项，请添加一个！" 
-      />
-      
+
+      <el-empty v-if="filteredTodos.length === 0" description="没有待办事项，请添加一个！" />
+
       <div v-else class="todo-list">
-        <TodoItem 
-          v-for="todo in filteredTodos" 
-          :key="todo.id" 
+        <TodoItem
+          v-for="todo in filteredTodos"
+          :key="todo.id"
           :todo="todo"
           @edit="openEditDialog"
         />
       </div>
     </div>
-    
+
     <!-- 编辑对话框 -->
     <el-dialog
       v-model="dialogVisible"
@@ -241,7 +240,7 @@ const isAdmin = computed(() => userStore.userRole === 'admin');
             value-format="YYYY-MM-DD"
             :shortcuts="dateShortcuts"
             :editable="false"
-            :disabled-date="(time) => time.getTime() < Date.now() - 8.64e7"
+            :disabled-date="time => time.getTime() < Date.now() - 8.64e7"
             clearable
           />
           <div v-if="editForm.dueDate" class="date-tip">
@@ -278,7 +277,7 @@ const isAdmin = computed(() => userStore.userRole === 'admin');
 }
 
 h1 {
-  color: #409EFF;
+  color: #409eff;
   font-size: 2rem;
   margin: 0;
   padding: 10px 0;
@@ -307,7 +306,7 @@ h1 {
 
 h3 {
   margin-top: 0;
-  color: #409EFF;
+  color: #409eff;
   margin-bottom: 15px;
 }
 
@@ -340,24 +339,24 @@ h3 {
     width: 100%;
     padding: 0;
   }
-  
+
   h1 {
     font-size: 1.6rem;
   }
-  
+
   .todo-list-container {
     padding: 15px;
     width: 100%;
   }
-  
+
   .overdue-alert-content {
     flex-direction: column;
     align-items: flex-start;
     gap: 10px;
   }
-  
+
   .overdue-alert-content button {
     margin-top: 5px;
   }
 }
-</style> 
+</style>

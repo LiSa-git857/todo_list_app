@@ -9,7 +9,7 @@ const router = useRouter()
 
 const loginForm = ref({
   username: '',
-  password: ''
+  password: '',
 })
 
 const loading = ref(false)
@@ -19,12 +19,12 @@ const handleLogin = async () => {
     ElMessage.warning('请输入用户名和密码')
     return
   }
-  
+
   loading.value = true
-  
+
   try {
     const success = userStore.login(loginForm.value.username, loginForm.value.password)
-    
+
     if (success) {
       ElMessage.success('登录成功')
       router.push('/todos')
@@ -46,33 +46,24 @@ const handleLogin = async () => {
       <h2 class="login-title">待办事项系统登录</h2>
       <el-form @submit.prevent="handleLogin" class="login-form">
         <el-form-item>
-          <el-input 
-            v-model="loginForm.username" 
-            placeholder="用户名" 
-            prefix-icon="User"
-          />
+          <el-input v-model="loginForm.username" placeholder="用户名" prefix-icon="User" />
         </el-form-item>
         <el-form-item>
-          <el-input 
-            v-model="loginForm.password" 
-            type="password" 
-            placeholder="密码" 
+          <el-input
+            v-model="loginForm.password"
+            type="password"
+            placeholder="密码"
             prefix-icon="Lock"
             @keyup.enter="handleLogin"
           />
         </el-form-item>
         <el-form-item>
-          <el-button 
-            type="primary" 
-            :loading="loading" 
-            @click="handleLogin" 
-            class="login-button"
-          >
+          <el-button type="primary" :loading="loading" @click="handleLogin" class="login-button">
             登录
           </el-button>
         </el-form-item>
       </el-form>
-      
+
       <div class="login-tip">
         <p><strong>默认账号：</strong></p>
         <p>管理员 - 用户名：admin，密码：!Q@W#E4r5t6y</p>
@@ -102,7 +93,7 @@ const handleLogin = async () => {
 .login-title {
   text-align: center;
   margin-bottom: 30px;
-  color: #409EFF;
+  color: #409eff;
 }
 
 .login-form {
@@ -128,4 +119,4 @@ const handleLogin = async () => {
     padding: 20px;
   }
 }
-</style> 
+</style>

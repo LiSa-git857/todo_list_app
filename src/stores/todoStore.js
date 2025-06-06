@@ -6,7 +6,7 @@ export const useTodoStore = defineStore('todo', () => {
   // 状态
   const todos = ref([])
   const userStore = useUserStore()
-  
+
   // 从localStorage加载数据
   const loadTodos = () => {
     const savedTodos = localStorage.getItem('todos')
@@ -14,12 +14,12 @@ export const useTodoStore = defineStore('todo', () => {
       todos.value = JSON.parse(savedTodos)
     }
   }
-  
+
   // 保存数据到localStorage
   const saveTodos = () => {
     localStorage.setItem('todos', JSON.stringify(todos.value))
   }
-  
+
   // 添加新待办事项
   const addTodo = (text, priority = 'normal', dueDate = null) => {
     const newTodo = {
@@ -30,18 +30,18 @@ export const useTodoStore = defineStore('todo', () => {
       completed: false,
       createdAt: new Date().toISOString(),
       userId: userStore.currentUser?.id || null, // 添加用户ID
-      userName: userStore.currentUser?.name || '未知用户' // 添加用户名称
+      userName: userStore.currentUser?.name || '未知用户', // 添加用户名称
     }
     todos.value.push(newTodo)
     saveTodos()
   }
-  
+
   // 删除待办事项
-  const removeTodo = (id) => {
+  const removeTodo = id => {
     todos.value = todos.value.filter(todo => todo.id !== id)
     saveTodos()
   }
-  
+
   // 更新待办事项
   const updateTodo = (id, updates) => {
     const index = todos.value.findIndex(todo => todo.id === id)
@@ -50,50 +50,50 @@ export const useTodoStore = defineStore('todo', () => {
       saveTodos()
     }
   }
-  
+
   // 切换待办事项状态
-  const toggleTodo = (id) => {
+  const toggleTodo = id => {
     const todo = todos.value.find(todo => todo.id === id)
     if (todo) {
       todo.completed = !todo.completed
       saveTodos()
     }
   }
-  
+
   // 计算属性：统计信息
   const totalTodos = computed(() => {
     return getUserTodos().length
   })
-  
+
   const completedTodos = computed(() => {
     return getUserTodos().filter(todo => todo.completed).length
   })
-  
+
   const uncompletedTodos = computed(() => {
     return getUserTodos().filter(todo => !todo.completed).length
   })
-  
+
   const completionRate = computed(() => {
     if (totalTodos.value === 0) return 0
     return Math.round((completedTodos.value / totalTodos.value) * 100)
   })
-  
+
   // 获取当前用户的待办事项
   const getUserTodos = () => {
     if (!userStore.currentUser) return []
     return todos.value.filter(todo => todo.userId === userStore.currentUser.id)
   }
-  
+
   // 根据用户ID获取待办事项
-  const getTodosByUserId = (userId) => {
+  const getTodosByUserId = userId => {
     return todos.value.filter(todo => todo.userId === userId)
   }
-  
+
   // 过滤函数
   const getFilteredTodos = (filter = 'all', sortBy = 'createdAt', userId = null) => {
     // 默认获取当前用户的待办事项，管理员可以指定用户ID或获取所有待办事项
     let filteredTodos = []
-    
+
     if (userStore.userRole === 'admin' && userId !== null) {
       // 管理员查看特定用户的待办事项
       filteredTodos = [...todos.value.filter(todo => todo.userId === userId)]
@@ -101,14 +101,14 @@ export const useTodoStore = defineStore('todo', () => {
       // 普通用户和管理员都只查看自己的待办事项
       filteredTodos = [...getUserTodos()]
     }
-    
+
     // 应用过滤条件
     if (filter === 'completed') {
       filteredTodos = filteredTodos.filter(todo => todo.completed)
     } else if (filter === 'active') {
       filteredTodos = filteredTodos.filter(todo => !todo.completed)
     }
-    
+
     // 应用排序
     filteredTodos.sort((a, b) => {
       if (sortBy === 'priority') {
@@ -123,15 +123,15 @@ export const useTodoStore = defineStore('todo', () => {
         return new Date(b.createdAt) - new Date(a.createdAt)
       }
     })
-    
+
     return filteredTodos
   }
-  
+
   // 获取所有用户的统计信息
   const getUsersStats = () => {
     // 从待办事项中提取所有用户ID
     const userIds = [...new Set(todos.value.map(todo => todo.userId))]
-    
+
     return userIds.map(userId => {
       const userTodos = todos.value.filter(todo => todo.userId === userId)
       const userName = userTodos[0]?.userName || '未知用户'
@@ -139,34 +139,34 @@ export const useTodoStore = defineStore('todo', () => {
       const completed = userTodos.filter(todo => todo.completed).length
       const uncompleted = total - completed
       const rate = total > 0 ? Math.round((completed / total) * 100) : 0
-      
+
       return {
         userId,
         userName,
         total,
         completed,
         uncompleted,
-        rate
+        rate,
       }
     })
   }
-  
+
   // 初始加载
   loadTodos()
-  
-  return { 
-    todos, 
-    addTodo, 
-    removeTodo, 
-    updateTodo, 
-    toggleTodo, 
-    totalTodos, 
-    completedTodos, 
-    uncompletedTodos, 
+
+  return {
+    todos,
+    addTodo,
+    removeTodo,
+    updateTodo,
+    toggleTodo,
+    totalTodos,
+    completedTodos,
+    uncompletedTodos,
     completionRate,
     getFilteredTodos,
     getUserTodos,
     getTodosByUserId,
-    getUsersStats
+    getUsersStats,
   }
-}) 
+})

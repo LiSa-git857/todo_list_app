@@ -12,21 +12,25 @@ const todoStore = useTodoStore()
         <span class="stat-label">总计</span>
         <el-tag size="large">{{ todoStore.totalTodos }}</el-tag>
       </div>
-      
+
       <div class="stat-item">
         <span class="stat-label">已完成</span>
-        <el-tag size="large" type="success">{{ todoStore.completedTodos }}</el-tag>
+        <el-tag size="large" type="success">
+          {{ todoStore.completedTodos }}
+        </el-tag>
       </div>
-      
+
       <div class="stat-item">
         <span class="stat-label">未完成</span>
-        <el-tag size="large" type="warning">{{ todoStore.uncompletedTodos }}</el-tag>
+        <el-tag size="large" type="warning">
+          {{ todoStore.uncompletedTodos }}
+        </el-tag>
       </div>
-      
+
       <div class="stat-item">
         <span class="stat-label">完成率</span>
-        <el-progress 
-          :percentage="todoStore.completionRate" 
+        <el-progress
+          :percentage="todoStore.completionRate"
           :stroke-width="15"
           :format="percent => `${percent}%`"
           :status="todoStore.completionRate === 100 ? 'success' : ''"
@@ -49,7 +53,7 @@ const todoStore = useTodoStore()
 
 h3 {
   margin-top: 0;
-  color: #409EFF;
+  color: #409eff;
   margin-bottom: 15px;
 }
 
@@ -74,12 +78,12 @@ h3 {
   .todo-stats {
     padding: 15px;
   }
-  
+
   h3 {
     font-size: 1.2rem;
     margin-bottom: 10px;
   }
-  
+
   .stats-container {
     grid-template-columns: repeat(2, 1fr);
     gap: 15px;
@@ -91,4 +95,4 @@ h3 {
     grid-template-columns: 1fr;
   }
 }
-</style> 
+</style>

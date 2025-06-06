@@ -14,9 +14,9 @@ import router from './router'
 if (process.env.NODE_ENV === 'development') {
   import('./utils/performance').then(({ createLongTaskObserver }) => {
     // 初始化长任务监控
-    createLongTaskObserver();
-    console.info('[性能] 性能监控已启用');
-  });
+    createLongTaskObserver()
+    console.info('[性能] 性能监控已启用')
+  })
 }
 
 const app = createApp(App)
@@ -28,7 +28,7 @@ for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
 
 app.use(createPinia())
 app.use(ElementPlus, {
-  locale: zhCn
+  locale: zhCn,
 })
 app.use(router)
 app.mount('#app')

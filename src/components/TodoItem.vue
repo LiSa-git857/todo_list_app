@@ -7,8 +7,8 @@ import { computed } from 'vue'
 const props = defineProps({
   todo: {
     type: Object,
-    required: true
-  }
+    required: true,
+  },
 })
 
 const todoStore = useTodoStore()
@@ -19,7 +19,7 @@ const canCheckTodo = computed(() => userStore.hasPermission('check'))
 const canUncheckTodo = computed(() => userStore.hasPermission('uncheck'))
 
 // 处理复选框变更
-const handleCheckChange = (checked) => {
+const handleCheckChange = checked => {
   // 如果是从未完成到完成，检查"check"权限
   // 如果是从完成到未完成，检查"uncheck"权限
   if ((checked && canCheckTodo.value) || (!checked && canUncheckTodo.value)) {
@@ -30,32 +30,40 @@ const handleCheckChange = (checked) => {
   }
 }
 
-const getPriorityType = (priority) => {
-  switch(priority) {
-    case 'high': return 'danger'
-    case 'normal': return 'warning'
-    case 'low': return 'info'
-    default: return 'info'
+const getPriorityType = priority => {
+  switch (priority) {
+    case 'high':
+      return 'danger'
+    case 'normal':
+      return 'warning'
+    case 'low':
+      return 'info'
+    default:
+      return 'info'
   }
 }
 
-const getPriorityLabel = (priority) => {
-  switch(priority) {
-    case 'high': return '高'
-    case 'normal': return '中'
-    case 'low': return '低'
-    default: return '中'
+const getPriorityLabel = priority => {
+  switch (priority) {
+    case 'high':
+      return '高'
+    case 'normal':
+      return '中'
+    case 'low':
+      return '低'
+    default:
+      return '中'
   }
 }
 
 // 检查任务是否已过期但未完成
 const isOverdue = computed(() => {
   if (!props.todo.dueDate || props.todo.completed) return false
-  
+
   const dueDate = new Date(props.todo.dueDate)
   const today = new Date()
   today.setHours(0, 0, 0, 0)
-  
+
   return dueDate < today
 })
 
@@ -68,13 +76,13 @@ const getDueDateTagType = computed(() => {
 
 <template>
   <div class="todo-item" :class="{ completed: todo.completed, overdue: isOverdue }">
-    <el-checkbox 
+    <el-checkbox
       :model-value="todo.completed"
       @change="handleCheckChange"
       size="large"
       :disabled="todo.completed && !canUncheckTodo"
     />
-    
+
     <div class="todo-content">
       <div class="todo-header">
         <span class="todo-text">{{ todo.text }}</span>
@@ -83,10 +91,7 @@ const getDueDateTagType = computed(() => {
             {{ getPriorityLabel(todo.priority) }}
           </el-tag>
           <el-tag v-if="todo.dueDate" :type="getDueDateTagType" size="small">
-            <el-tooltip
-              :content="formatDate(todo.dueDate)"
-              placement="top"
-            >
+            <el-tooltip :content="formatDate(todo.dueDate)" placement="top">
               <span>
                 <span v-if="isOverdue" style="margin-right: 4px">
                   <el-icon class="overdue-icon"><Warning /></el-icon>
@@ -98,13 +103,13 @@ const getDueDateTagType = computed(() => {
         </div>
       </div>
       <div v-if="isOverdue" class="overdue-warning">
-        <el-icon><Warning /></el-icon> 
+        <el-icon><Warning /></el-icon>
         此任务已过期，请尽快完成
       </div>
     </div>
-    
+
     <div class="todo-actions">
-      <el-button 
+      <el-button
         v-if="userStore.hasPermission('edit')"
         type="primary"
         size="small"
@@ -112,7 +117,7 @@ const getDueDateTagType = computed(() => {
         icon="Edit"
         @click="$emit('edit', todo)"
       ></el-button>
-      <el-button 
+      <el-button
         v-if="userStore.hasPermission('delete')"
         type="danger"
         size="small"
@@ -182,12 +187,12 @@ const getDueDateTagType = computed(() => {
 
 /* 过期任务样式 */
 .overdue {
-  border-left: 4px solid #F56C6C;
-  background-color: #FEF0F0;
+  border-left: 4px solid #f56c6c;
+  background-color: #fef0f0;
 }
 
 .overdue-warning {
-  color: #F56C6C;
+  color: #f56c6c;
   font-size: 12px;
   margin-top: 5px;
   display: flex;
@@ -205,23 +210,23 @@ const getDueDateTagType = computed(() => {
   .todo-item {
     padding: 10px;
   }
-  
+
   .todo-content {
     margin: 0 10px;
   }
-  
+
   .todo-header {
     flex-direction: column;
     align-items: flex-start;
     gap: 5px;
   }
-  
+
   .todo-text {
     font-size: 14px;
   }
-  
+
   .todo-actions {
     margin-top: 5px;
   }
 }
-</style> 
+</style>

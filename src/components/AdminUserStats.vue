@@ -15,7 +15,7 @@ const loadUserStats = () => {
 }
 
 // 选择用户
-const selectUser = (userId) => {
+const selectUser = userId => {
   selectedUserId.value = userId
 }
 
@@ -34,16 +34,11 @@ onMounted(() => {
   <div class="admin-stats">
     <div class="admin-header">
       <h2>用户待办事项统计</h2>
-      <el-button 
-        v-if="selectedUserId"
-        @click="resetUserSelection" 
-        size="small" 
-        type="primary"
-      >
+      <el-button v-if="selectedUserId" @click="resetUserSelection" size="small" type="primary">
         返回所有用户统计
       </el-button>
     </div>
-    
+
     <div v-if="!selectedUserId" class="users-table">
       <el-table :data="usersStats" stripe style="width: 100%">
         <el-table-column prop="userName" label="用户名称" />
@@ -51,33 +46,32 @@ onMounted(() => {
         <el-table-column prop="completed" label="已完成" width="100" />
         <el-table-column prop="uncompleted" label="未完成" width="100" />
         <el-table-column label="完成率" width="100">
-          <template #default="scope">
-            {{ scope.row.rate }}%
-          </template>
+          <template #default="scope">{{ scope.row.rate }}%</template>
         </el-table-column>
         <el-table-column label="操作" width="150">
           <template #default="scope">
-            <el-button 
-              type="primary" 
-              size="small" 
-              @click="selectUser(scope.row.userId)"
-            >
+            <el-button type="primary" size="small" @click="selectUser(scope.row.userId)">
               查看详情
             </el-button>
           </template>
         </el-table-column>
       </el-table>
     </div>
-    
+
     <div v-else class="user-todos">
       <h3 class="user-title">
-        {{ usersStats.find(u => u.userId === selectedUserId)?.userName }} 的待办事项
+        {{ usersStats.find(u => u.userId === selectedUserId)?.userName }}
+        的待办事项
       </h3>
-      
-      <el-card v-for="todo in todoStore.getTodosByUserId(selectedUserId)" :key="todo.id" class="todo-card">
+
+      <el-card
+        v-for="todo in todoStore.getTodosByUserId(selectedUserId)"
+        :key="todo.id"
+        class="todo-card"
+      >
         <div class="todo-card-content">
           <div class="todo-card-header">
-            <el-checkbox 
+            <el-checkbox
               :model-value="todo.completed"
               @change="todoStore.toggleTodo(todo.id)"
               size="large"
@@ -86,7 +80,7 @@ onMounted(() => {
               {{ todo.text }}
             </span>
           </div>
-          
+
           <div class="todo-card-tags">
             <el-tag v-if="todo.priority" :type="getPriorityType(todo.priority)" size="small">
               {{ getPriorityLabel(todo.priority) }}
@@ -95,9 +89,9 @@ onMounted(() => {
               截止: {{ todo.dueDate }}
             </el-tag>
           </div>
-          
+
           <div class="todo-card-actions">
-            <el-button 
+            <el-button
               type="danger"
               size="small"
               icon="Delete"
@@ -108,10 +102,10 @@ onMounted(() => {
           </div>
         </div>
       </el-card>
-      
-      <el-empty 
-        v-if="todoStore.getTodosByUserId(selectedUserId).length === 0" 
-        description="该用户暂无待办事项" 
+
+      <el-empty
+        v-if="todoStore.getTodosByUserId(selectedUserId).length === 0"
+        description="该用户暂无待办事项"
       />
     </div>
   </div>
@@ -120,20 +114,28 @@ onMounted(() => {
 <script>
 // 辅助函数，在模板中使用
 function getPriorityType(priority) {
-  switch(priority) {
-    case 'high': return 'danger'
-    case 'normal': return 'warning'
-    case 'low': return 'info'
-    default: return 'info'
+  switch (priority) {
+    case 'high':
+      return 'danger'
+    case 'normal':
+      return 'warning'
+    case 'low':
+      return 'info'
+    default:
+      return 'info'
   }
 }
 
 function getPriorityLabel(priority) {
-  switch(priority) {
-    case 'high': return '高'
-    case 'normal': return '中'
-    case 'low': return '低'
-    default: return '中'
+  switch (priority) {
+    case 'high':
+      return '高'
+    case 'normal':
+      return '中'
+    case 'low':
+      return '低'
+    default:
+      return '中'
   }
 }
 </script>
@@ -158,7 +160,7 @@ function getPriorityLabel(priority) {
 
 .admin-header h2 {
   margin: 0;
-  color: #409EFF;
+  color: #409eff;
 }
 
 .users-table {
@@ -214,19 +216,19 @@ function getPriorityLabel(priority) {
   .admin-stats {
     padding: 15px;
   }
-  
+
   .admin-header {
     flex-direction: column;
     gap: 10px;
     align-items: flex-start;
   }
-  
+
   .todo-card-content {
     gap: 8px;
   }
-  
+
   .todo-text {
     font-size: 14px;
   }
 }
-</style> 
+</style>

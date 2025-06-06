@@ -24,8 +24,8 @@
 }
 
 /* 移除箭头指示器 */
-.el-popper[x-placement^=bottom] .popper__arrow,
-.el-popper[x-placement^=top] .popper__arrow {
+.el-popper[x-placement^='bottom'] .popper__arrow,
+.el-popper[x-placement^='top'] .popper__arrow {
   display: none !important;
 }
 
@@ -39,4 +39,4 @@
 /* 移除底部多余留白 */
 .el-main {
   padding-bottom: 0 !important;
-} 
+}

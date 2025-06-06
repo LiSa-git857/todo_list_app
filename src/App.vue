@@ -3,12 +3,7 @@ import { onMounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useUserStore } from './stores/userStore'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { 
-  User, 
-  SwitchButton, 
-  List, 
-  HomeFilled
-} from '@element-plus/icons-vue'
+import { User, SwitchButton, List, HomeFilled } from '@element-plus/icons-vue'
 
 const userStore = useUserStore()
 const router = useRouter()
@@ -27,25 +22,23 @@ onMounted(() => {
 })
 
 const handleLogout = () => {
-  ElMessageBox.confirm(
-    '确定要退出登录吗？',
-    '提示',
-    {
-      confirmButtonText: '确定',
-      cancelButtonText: '取消',
-      type: 'warning',
-    }
-  ).then(() => {
-    userStore.logout()
-    router.push('/login')
-    ElMessage.success('已安全退出登录')
-  }).catch(() => {
-    // 用户取消
+  ElMessageBox.confirm('确定要退出登录吗？', '提示', {
+    confirmButtonText: '确定',
+    cancelButtonText: '取消',
+    type: 'warning',
   })
+    .then(() => {
+      userStore.logout()
+      router.push('/login')
+      ElMessage.success('已安全退出登录')
+    })
+    .catch(() => {
+      // 用户取消
+    })
 }
 
 // 导航至路由
-const navigateAndCloseSidebar = (route) => {
+const navigateAndCloseSidebar = route => {
   router.push(route)
 }
 </script>
@@ -56,7 +49,7 @@ const navigateAndCloseSidebar = (route) => {
     <template v-if="!userStore.isLoggedIn">
       <router-view />
     </template>
-    
+
     <!-- 已登录用户显示应用导航和布局 -->
     <template v-else>
       <div class="common-layout">
@@ -68,26 +61,30 @@ const navigateAndCloseSidebar = (route) => {
                 <img alt="Vue logo" class="logo" src="./assets/logo.svg" width="30" height="30" />
                 <h1 class="app-title">待办事项管理系统</h1>
               </div>
-              
+
               <div class="header-right">
                 <!-- 用户信息 -->
                 <div class="user-info-header">
-                  <el-avatar 
-                    :size="32" 
+                  <el-avatar
+                    :size="32"
                     :icon="User"
                     class="user-avatar"
-                    :style="{ backgroundColor: isAdmin ? '#f56c6c' : '#909399' }"
+                    :style="{
+                      backgroundColor: isAdmin ? '#f56c6c' : '#909399',
+                    }"
                   />
                   <div class="user-details-header">
-                    <el-tag v-if="isAdmin" type="danger" size="small" effect="dark">管理员</el-tag>
-                    <el-tag v-else type="info" size="small" effect="dark">普通用户</el-tag>
+                    <el-tag v-if="isAdmin" type="danger" size="small" effect="dark">
+                      管理员
+                    </el-tag>
+                    <el-tag v-else type="info" size="small" effect="dark"> 普通用户 </el-tag>
                   </div>
                 </div>
-                
+
                 <!-- 退出登录按钮 -->
-                <el-button 
-                  type="danger" 
-                  @click="handleLogout" 
+                <el-button
+                  type="danger"
+                  @click="handleLogout"
                   class="logout-button-header"
                   :icon="SwitchButton"
                   size="small"
@@ -98,7 +95,7 @@ const navigateAndCloseSidebar = (route) => {
               </div>
             </div>
           </el-header>
-          
+
           <el-container class="content-container">
             <!-- 侧边栏导航 -->
             <el-aside width="200px" class="app-sidebar">
@@ -113,9 +110,9 @@ const navigateAndCloseSidebar = (route) => {
                   <el-icon><List /></el-icon>
                   <span>我的待办事项</span>
                 </el-menu-item>
-                
-                <el-menu-item 
-                  v-if="isAdmin" 
+
+                <el-menu-item
+                  v-if="isAdmin"
                   index="/admin/users"
                   @click="navigateAndCloseSidebar('/admin/users')"
                 >
@@ -124,7 +121,7 @@ const navigateAndCloseSidebar = (route) => {
                 </el-menu-item>
               </el-menu>
             </el-aside>
-            
+
             <el-container class="right-container">
               <!-- 主内容区域 -->
               <el-main class="app-main">
@@ -134,12 +131,12 @@ const navigateAndCloseSidebar = (route) => {
                     <span>{{ $route.meta.title || '待办事项管理系统' }}</span>
                   </div>
                 </div>
-                
+
                 <div class="main-content">
                   <router-view />
                 </div>
               </el-main>
-              
+
               <!-- 页脚 -->
               <el-footer height="40px" class="app-footer">
                 <p>待办事项管理系统 &copy; {{ new Date().getFullYear() }}</p>
@@ -158,14 +155,18 @@ const navigateAndCloseSidebar = (route) => {
   --footer-height: 40px;
 }
 
-html, body, #app {
+html,
+body,
+#app {
   margin: 0;
   padding: 0;
   height: 100vh;
   width: 100vw;
   overflow: hidden;
   background-color: #f5f7fa;
-  font-family: 'Helvetica Neue', Helvetica, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', '微软雅黑', Arial, sans-serif;
+  font-family:
+    'Helvetica Neue', Helvetica, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', '微软雅黑',
+    Arial, sans-serif;
 }
 
 #app {
@@ -185,7 +186,7 @@ html, body, #app {
 }
 
 /* 隐藏底部滚动条指示器 */
-.el-popper, 
+.el-popper,
 .el-scrollbar__bar,
 .el-select-dropdown__item,
 .el-select-dropdown__wrap,
@@ -194,7 +195,7 @@ html, body, #app {
 }
 
 /* 移除底部多余的指示器 */
-.el-popper[x-placement^=bottom] .popper__arrow,
+.el-popper[x-placement^='bottom'] .popper__arrow,
 .el-scrollbar__bar.is-horizontal {
   display: none !important;
 }
@@ -401,15 +402,15 @@ html, body, #app {
   .user-details-header {
     display: none;
   }
-  
+
   .logout-button-header span {
     display: none;
   }
-  
+
   .logout-button-header {
     padding: 6px;
   }
-  
+
   .right-container {
     width: calc(100% - 64px);
   }
@@ -419,15 +420,15 @@ html, body, #app {
   .app-sidebar {
     width: 64px !important;
   }
-  
+
   .app-title {
     display: none;
   }
-  
+
   .main-content {
     padding: 15px;
   }
-  
+
   .app-main {
     padding: 10px;
   }
@@ -437,11 +438,11 @@ html, body, #app {
   .header-content {
     padding: 0 10px;
   }
-  
+
   .logo-container {
     gap: 5px;
   }
-  
+
   .logout-button-header {
     padding: 4px;
   }

@@ -82,4 +82,4 @@ sudo systemctl restart nginx
 
 ### 静态资源加载问题
 
-如果静态资源（如图片、CSS、JS）无法正确加载，请检查部署路径和`vite.config.js`中的`base`配置是否一致。 
+如果静态资源（如图片、CSS、JS）无法正确加载，请检查部署路径和`vite.config.js`中的`base`配置是否一致。

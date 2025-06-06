@@ -1,13 +1,16 @@
 @import './base.css';
 
 /* 重置基础样式 */
-html, body {
+html,
+body {
   margin: 0;
   padding: 0;
   width: 100%;
   height: 100%;
   background-color: #f5f7fa;
-  font-family: 'Helvetica Neue', Helvetica, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', '微软雅黑', Arial, sans-serif;
+  font-family:
+    'Helvetica Neue', Helvetica, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', '微软雅黑',
+    Arial, sans-serif;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -79,8 +82,8 @@ a,
 .el-dropdown-menu,
 .el-picker-panel__content,
 .el-date-picker__header,
-.el-date-table, 
-.el-year-table, 
+.el-date-table,
+.el-year-table,
 .el-month-table,
 .el-scrollbar__wrap {
   margin-bottom: 0 !important;
@@ -100,9 +103,10 @@ a,
 .el-message,
 .el-popover,
 .el-date-picker {
-  box-shadow: 0 3px 6px -4px rgba(0, 0, 0, 0.12), 
-              0 6px 16px 0 rgba(0, 0, 0, 0.08), 
-              0 9px 28px 8px rgba(0, 0, 0, 0.05) !important;
+  box-shadow:
+    0 3px 6px -4px rgba(0, 0, 0, 0.12),
+    0 6px 16px 0 rgba(0, 0, 0, 0.08),
+    0 9px 28px 8px rgba(0, 0, 0, 0.05) !important;
 }
 
 /* 改进容器布局 */
@@ -144,7 +148,7 @@ a,
     padding: 10px;
     width: 100%;
   }
-  
+
   #app {
     width: 100%;
   }
