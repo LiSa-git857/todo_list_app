@@ -1,0 +1,24 @@
+@startuml Simple Test
+!theme plain
+
+package "前端应用" {
+  [App.vue] as App
+  [Router] as Router
+  [UserStore] as UserStore
+  [TodoStore] as TodoStore
+}
+
+package "视图组件" {
+  [登录页面] as Login
+  [待办列表] as TodoList
+  [管理员页面] as Admin
+}
+
+App --> Router
+Router --> Login
+Router --> TodoList
+Router --> Admin
+UserStore --> App
+TodoStore --> TodoList
+
+@enduml 
